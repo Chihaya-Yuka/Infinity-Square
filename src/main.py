@@ -81,13 +81,89 @@ class VirtualTerminal:
         elif cmd == "ls":
             return self._list_files(command)
         elif cmd == "pkg":
-            return self._package_manager(command)
+            return self._handle_pkg(command)
         elif cmd == "neofetch":
             return self._show_system_info()
         elif cmd == "history":
             return "\n".join(f"{i+1}  {cmd}" for i, cmd in enumerate(self.command_history[-10:]))
         elif cmd == "help":
             return self._show_help()
+
+    def _show_help(self):
+        """赛博朋克风格的帮助信息"""
+        return f"""
+    \033[36m
+    可用命令：
+    ls      ░ 显示神经矩阵目录 (当前路径: {self.current_dir})
+    cd      ░ 切换意识焦点路径
+    pkg     ░ 纳米机器管理系统
+    neofetch░ 显示义体配置
+    matrix  ░ 访问母体核心
+    help    ░ 显示此帮助信息
+
+    [!] 输入`decrypt`触发破解协议
+    [警告] 82%的赛博精神病患者最后都用过rm -rf /
+    \033[0m
+        """
+
+    def _handle_pkg(self, command):
+        """处理纳米机器管理"""
+        parts = command.split()
+        if len(parts) < 2:
+            return "Usage: pkg [install/remove] <package>"
+
+        action = parts[1].lower()
+        if action == "install":
+            return self._install_package(parts[2:])
+        elif action == "remove":
+            return self._remove_package(parts[2:])
+        elif action == "list":
+            return "已安装纳米组件:\n" + "\n".join(f"▙ {pkg}" for pkg in self.packages)
+        else:
+            return f"未知操作: {action}"
+
+    def _install_package(self, packages):
+        """安装纳米组件"""
+        new_pkgs = [p for p in packages if p not in self.packages]
+        conflict = [p for p in packages if p in self.packages]
+    
+        response = []
+        if new_pkgs:
+            response.append(self._simulate_install(new_pkgs))
+            self.packages.extend(new_pkgs)
+        if conflict:
+            response.append(f"\033[33m警告：组件{' '.join(conflict)}已处于激活状态\033[0m")
+    
+        return "\n".join(response)
+
+    def _remove_package(self, packages):
+        """移除纳米组件"""
+        removed = []
+        for p in packages:
+            if p in self.packages:
+                self.packages.remove(p)
+                removed.append(p)
+        if removed:
+            return f"已解除组件: {', '.join(removed)}\n生物兼容性检查通过 ✅"
+        return "没有组件被移除"
+
+    def _handle_ls(self):
+        """显示神经矩阵目录"""
+        dir_name = self.current_dir.split("/")[-1]
+        files = self.file_system.get(dir_name, [])
+        return "  ".join(f"\033[35m{f}\033[0m" if "." in f else f"\033[34m{f}/\033[0m" for f in files)
+
+    def _handle_cd(self, command):
+        """切换意识焦点路径"""
+        parts = command.split()
+        if len(parts) < 2:
+            return "需要指定路径"
+    
+        target = parts[1]
+        if target in self.file_system:
+            self.current_dir = f"/cyberpunk/2077/{target}"
+            return f"焦点已切换至: {self.current_dir}"
+        return f"\033[31m路径错误: {target} 不存在于神经矩阵中\033[0m"
 
     def _show_matrix(self):
         """数字雨特效"""
