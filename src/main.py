@@ -137,4 +137,18 @@ class VirtualTerminal:
 
 if __name__ == "__main__":
     terminal = VirtualTerminal()
+    print('''
+Connecting to Infinity-Square..
+Connection established.
+To escape to local shell, press 'Ctrl+Alt+]'.
+---------------------------------------------
+    ''')
+    time.sleep(random.random())
+    print('''
+WARNING! The remote SSH server rejected X11 forwarding request.
+There were 8120 failed login attempts since the last successful login.
+Last login: Thu Jan 30 18:17:53 2025 from you.
+
+Welcome to Infinity-Square v9.9
+          ''')
     terminal.start()
