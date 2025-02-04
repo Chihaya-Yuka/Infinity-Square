@@ -33,11 +33,11 @@ public:
     string get_structed_info(std::vector<std::vector<std::string>> machine_info) {
         string info = "";
         for (int i = 0; i < sizeof &machine_info / sizeof &machine_info[0]; i ++) {
-            info += machine_info[i][0] + ": " + machine_info[i][1] + "\n";
+            info += machine_info[i][0] + ", " + machine_info[i][1] + "\n";
         }
         return info;
     }
-    
+
 private:
     std::vector<std::vector<std::string>> machine_info;
 };
